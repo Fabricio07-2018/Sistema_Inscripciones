@@ -1,1 +1,66 @@
 
+import json
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+CHARLAS_PATH = os.path.join(DATA_DIR, "charlas.json")
+INSCRIPCIONES_PATH = os.path.join(DATA_DIR, "inscripciones_charlas.txt")
+
+def _asegurar_data_dir():
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+def _charlas_default():
+    # Inicialización por defecto (puedes ajustar cupos)
+    return {
+        "Marketing": {"cupos": 5},
+        "Finanzas": {"cupos": 5},
+        "Liderazgo": {"cupos": 5},
+        "Superación": {"cupos": 5},
+        "Redes Sociales": {"cupos": 5}
+    }
+
+def cargar_charlas():
+    _asegurar_data_dir()
+    if not os.path.exists(CHARLAS_PATH):
+        # Crear archivo con valores por defecto si no existe
+        guardar_charlas(_charlas_default())
+    try:
+        with open(CHARLAS_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        # Reparar archivo corrupto con valores por defecto
+        datos = _charlas_default()
+        guardar_charlas(datos)
+        return datos
+    except Exception as e:
+        raise RuntimeError(f"No se pudo cargar charlas: {e}")
+
+def guardar_charlas(charlas: dict):
+    _asegurar_data_dir()
+    try:
+        with open(CHARLAS_PATH, "w", encoding="utf-8") as f:
+            json.dump(charlas, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        raise RuntimeError(f"No se pudo guardar charlas: {e}")
+
+def guardar_inscripcion(nombre: str, correo: str, tema_charla: str):
+    _asegurar_data_dir()
+    try:
+        linea = f"{nombre} | {correo} | {tema_charla}\n"
+        with open(INSCRIPCIONES_PATH, "a", encoding="utf-8") as f:
+            f.write(linea)
+    except Exception as e:
+        raise RuntimeError(f"No se pudo guardar la inscripción: {e}")
+
+def cargar_inscripciones():
+    _asegurar_data_dir()
+    if not os.path.exists(INSCRIPCIONES_PATH):
+        # Crear archivo vacío si no existe
+        with open(INSCRIPCIONES_PATH, "w", encoding="utf-8") as f:
+            f.write("")
+    try:
+        with open(INSCRIPCIONES_PATH, "r", encoding="utf-8") as f:
+            return f.readlines()
+    except Exception as e:
+        raise RuntimeError(f"No se pudo cargar inscripciones: {e}")

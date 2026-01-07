@@ -1,36 +1,26 @@
-from gestion_charlas import (
-    listar_charlas,
-    flujo_inscripcion,
-    mostrar_inscripciones
-)
+# main.py
+# Programa principal del sistema de inscripciones
 
-def mostrar_menu():
-    print("\n--- Sistema de Inscripciones ---")
-    print("1. Inscribirse en una charla")
-    print("2. Consultar inscripciones")
-    print("3. Salir")
+from gestion_charlas import inscribir, consultar
 
-def leer_opcion():
-    opcion = input("Seleccione una opción: ").strip()
-    if opcion not in {"1", "2", "3"}:
-        print("Opción inválida. Intente de nuevo.")
-        return leer_opcion()  # recursividad ante opción inválida
-    return opcion
-
-def main():
-    print("Bienvenido al Sistema de Inscripciones")
+def menu():
     while True:
-        mostrar_menu()
-        opcion = leer_opcion()
+        print("\n=== Sistema de Inscripciones ===")
+        print("1. Inscribirse en una charla")
+        print("2. Consultar inscripciones")
+        print("3. Salir")
+
+        opcion = input("Seleccione una opción: ")
 
         if opcion == "1":
-            listar_charlas()
-            flujo_inscripcion()
+            inscribir()
         elif opcion == "2":
-            mostrar_inscripciones()
+            consultar()
         elif opcion == "3":
-            print("Saliendo del sistema... ¡Hasta pronto!")
+            print("Gracias por usar el sistema. ¡Hasta pronto!")
             break
+        else:
+            print("Opción inválida, intente de nuevo.")
 
 if __name__ == "__main__":
-    main()
+    menu()
